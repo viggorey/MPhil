@@ -1,0 +1,8 @@
+## UPDATING GITHUB
+cd "/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/4. Code"
+git branch -m master main
+git push -u origin main
+
+git add .
+git commit -m "Update"
+git push -u origin main

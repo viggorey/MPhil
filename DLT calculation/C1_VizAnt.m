@@ -1,7 +1,7 @@
 % Visualization of 3D Trajectories from Exported Excel Dataset
 % Define the base path and file name
-base_path = '/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/5. Datasets/3D data/';
-file_prefix = '11U1'; % Set this to the prefix used during export
+base_path = '/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/5. Datasets/3D data/Large branch/';
+file_prefix = '12U6'; % Set this to the prefix used during export
 input_file = fullfile(base_path, [file_prefix, '.xlsx']); % Excel file path
 
 % Get the list of valid sheets in the Excel file

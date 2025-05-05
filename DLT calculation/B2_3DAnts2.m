@@ -1,22 +1,23 @@
 % Define: 
-base_path = '/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/5. Datasets/2D data/'; % Base path
-file_prefix = '11U1'; % Common file prefix
+base_path = '/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/5. Datasets/2D data/Large branch/'; % Base path
+file_prefix = '12U6'; % Common file prefix
 camera_suffixes = {'L', 'T', 'R', 'F'}; % Camera suffixes (Top, Left, Right, Front)
 
 
 A = [
-90.798, 91.6283, 68.6801, -6.9384; %  1 - first coefficient for all cameras
-0.9664, -2.8374, 5.6441, 114.8824;
-24.4139, -17.6627, -59.2024, -29.8135;
-594.3277, 667.1884, 676.3614, 498.9457;
--1.7397, 1.7846, -0.6094, -77.332;
-149.6519, 147.3786, 143.9186, -3.9629;
-0.121, -0.7585, 4.8412, 8.6032;
-331.1221, 300.1799, 342.79, 590.4905;
-0.0006, 0.001, -0.0011, -0.001;
--0.0012, 0.0003, 0.0006, 0.0003;
--0.0005, -0.0019, -0.0013, -0.0011
+    83.5273, 92.518, 81.1897, 87.1662;
+    1.4885, -3.1049, 3.8105, 1.3689;
+    48.5334, 7.2765, -38.6041, 17.7288;
+    692.1982, 757.5879, 652.8448, 663.2397;
+    -0.0698, 1.9538, -1.8253, 3.4876;
+    149.2815, 146.887, 142.6634, 127.964;
+    1.106, 0.0965, 4.574, -38.4277;
+    302.1854, 317.1885, 405.0939, 354.242;
+    0.0031, 0.0008, -0.0011, -0.0018;
+    0.0005, 0.0003, -0.0009, -0.004;
+    -0.0002, -0.0015, -0.001, 0.0013
 ];
+
 
 
 % Construct the full file paths dynamically
@@ -383,7 +384,7 @@ plotResidualComparisons(combo_stats, H_all);
 
 
 % Define the output folder and file name dynamically
-output_folder = '/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/5. Datasets/3D data/';
+output_folder = '/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/5. Datasets/3D data/Large branch/';
 output_file = fullfile(output_folder, [file_prefix, '.xlsx']); % Dynamic file name
 
 % Loop through each tracking point
