@@ -1,11 +1,11 @@
 % Define: 
 base_path = '/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/5. Datasets/2D data/Large branch/'; % Base path
-file_prefix = '11U1'; % Common file prefix
+file_prefix = '21D2'; % Common file prefix
 camera_suffixes = {'L', 'T', 'R', 'F'}; % Camera suffixes (Top, Left, Right, Front)
 
 
 A = [
-    -83.5273, -92.518, -81.1897, -87.1662;
+    83.5273, 92.518, 81.1897, 87.1662;
     1.4885, -3.1049, 3.8105, 1.3689;
     48.5334, 7.2765, -38.6041, 17.7288;
     692.1982, 757.5879, 652.8448, 663.2397;

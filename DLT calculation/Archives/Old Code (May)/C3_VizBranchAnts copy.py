@@ -13,24 +13,18 @@ def get_direction_from_points(points):
     return direction / np.linalg.norm(direction)
 
 def reconstruct_branch_axis(A, points_2d):
-    # Filter out empty arrays and get valid camera indices
-    valid_cameras = [i for i, points in enumerate(points_2d) if points.size > 0]
-    if len(valid_cameras) < 2:
-        raise ValueError("Need at least 2 cameras with points for reconstruction")
-    
-    # Use only valid cameras and their corresponding coefficients
-    A_subset = A[:, valid_cameras]
-    n_cameras = len(valid_cameras)
+    n_cameras = len(points_2d)  # Use number of provided point sets
+    A_subset = A[:, :n_cameras]  # Use corresponding subset of A matrix
     midline_vectors_2d = np.zeros((n_cameras, 2))
     
-    for i, cam_idx in enumerate(valid_cameras):
-        direction = get_direction_from_points(points_2d[cam_idx])
+    for i in range(n_cameras):
+        direction = get_direction_from_points(points_2d[i])
         midline_vectors_2d[i] = direction
     
     M = np.zeros((2 * n_cameras, 3 + n_cameras))
     
     for i in range(n_cameras):
-        L = A_subset[:, i]
+        L = A_subset[:, i]  # Use subset of A matrix
         u, v = midline_vectors_2d[i]
         
         row = 2 * i
@@ -48,27 +42,15 @@ def reconstruct_branch_axis(A, points_2d):
     direction = Vh[-1, :3]
     direction = direction / np.linalg.norm(direction)
     
-    # Print diagnostic information
-    print("\nDirection vector before adjustment:", direction)
-    
-    # Check if we need to flip the direction to align with y-axis
-    if abs(direction[1]) > abs(direction[0]) and abs(direction[1]) > abs(direction[2]):
-        if direction[1] < 0:  # If y component is negative, flip the vector
-            direction = -direction
-    
-    print("Direction vector after adjustment:", direction)
-    print("Component magnitudes - x:{:.3f}, y:{:.3f}, z:{:.3f}".format(
-        abs(direction[0]), abs(direction[1]), abs(direction[2])))
-    
-    # Use first valid camera's points for centroid calculation
-    centroid_2d = np.mean(points_2d[valid_cameras[0]], axis=0)
+    centroid_2d = np.mean(points_2d[0], axis=0)
+    u, v = centroid_2d
     
     P = np.zeros((2 * n_cameras, 3))
     b = np.zeros(2 * n_cameras)
     
-    for i, cam_idx in enumerate(valid_cameras):
-        L = A[:, cam_idx]
-        u, v = np.mean(points_2d[cam_idx], axis=0)
+    for i in range(n_cameras):
+        L = A[:, i]
+        u, v = np.mean(points_2d[i], axis=0)
         
         row = 2 * i
         P[row, 0] = u*L[8] - L[0]
@@ -84,69 +66,17 @@ def reconstruct_branch_axis(A, points_2d):
     point_on_line = np.linalg.lstsq(P, b, rcond=1e-10)[0]
     return direction, point_on_line
 
-def calculate_reprojection_error(A, point_3d, points_2d):
-    """
-    Calculate the reprojection error for a 3D point across all camera views.
-    Returns both per-camera errors and mean error.
-    """
-    errors = []
-    for i, (u, v) in enumerate(points_2d):
-        L = A[:, i]
-        # Project 3D point back to 2D
-        denom = (L[8]*point_3d[0] + L[9]*point_3d[1] + L[10]*point_3d[2] + 1)
-        u_proj = (L[0]*point_3d[0] + L[1]*point_3d[1] + L[2]*point_3d[2] + L[3]) / denom
-        v_proj = (L[4]*point_3d[0] + L[5]*point_3d[1] + L[6]*point_3d[2] + L[7]) / denom
-        
-        # Calculate Euclidean distance between projected and observed points
-        error = np.sqrt((u - u_proj)**2 + (v - v_proj)**2)
-        errors.append(error)
-    
-    return errors, np.mean(errors)
-
-def calculate_axis_residual(A, axis_direction, axis_point, points_2d):
-    """
-    Calculate how well the reconstructed axis matches the observed 2D points.
-    Returns both per-camera errors and mean error.
-    """
-    errors = []
-    for i, camera_points in enumerate(points_2d):
-        L = A[:, i]
-        camera_errors = []
-        
-        # Generate points along the 3D axis
-        t = np.linspace(-100, 100, 1000)
-        axis_points = axis_point + np.outer(t, axis_direction)
-        
-        # Project axis points to 2D
-        projected_points = []
-        for p in axis_points:
-            denom = (L[8]*p[0] + L[9]*p[1] + L[10]*p[2] + 1)
-            u = (L[0]*p[0] + L[1]*p[1] + L[2]*p[2] + L[3]) / denom
-            v = (L[4]*p[0] + L[5]*p[1] + L[6]*p[2] + L[7]) / denom
-            projected_points.append([u, v])
-        projected_points = np.array(projected_points)
-        
-        # Calculate distances from each observed point to the projected line
-        for point in camera_points:
-            # Find minimum distance to any point on the projected line
-            distances = np.linalg.norm(projected_points - point, axis=1)
-            min_distance = np.min(distances)
-            camera_errors.append(min_distance)
-        
-        errors.append(np.mean(camera_errors))
-    
-    return errors, np.mean(errors)
-
 def reconstruct_3d_point(A, points_2d):
-    n_cameras = len(points_2d)
+    n_cameras = len(points_2d)  # Use number of provided point sets
     if n_cameras < 2:
         raise ValueError("Need at least 2 cameras for 3D reconstruction")
     
+    A_subset = A[:, :n_cameras]  # Use corresponding subset of A matrix
     P = np.zeros((2 * n_cameras, 3))
     b = np.zeros(2 * n_cameras)
     
     for i in range(n_cameras):
-        L = A[:, i]
+        L = A_subset[:, i]
         u, v = points_2d[i]
         
         row = 2 * i
@@ -221,18 +151,27 @@ def create_branch_cylinder(axis_direction, axis_point, surface_points_3d, n_segm
         faces.append([v1, v3, v2])
     
     faces = np.array(faces)
-    mean_radius = np.mean(radii)
+    mean_radius = np.mean(radii)  # For compatibility with existing code
     
     return vertices, faces, mean_radius
+    
 
-def visualize_branch(vertices, faces, axis_direction, axis_point):
+def visualize_branch_and_ant_points(vertices, faces, ant_data, axis_direction, axis_point):
     plt.rcParams['toolbar'] = 'toolmanager'
-    fig = plt.figure(figsize=(15, 10))
+    fig = plt.figure(figsize=(15, 8))
     ax = fig.add_subplot(111, projection='3d')
     
     # Plot branch cylinder
     cylinder_mesh = Poly3DCollection(vertices[faces], alpha=0.3, facecolors='gray')
     ax.add_collection3d(cylinder_mesh)
+    
+    # Plot ant points with different colors
+    colors = plt.cm.rainbow(np.linspace(0, 1, len(ant_data)))
+    for i, (point_name, point_data) in enumerate(ant_data.items()):
+        x = point_data['X'].values
+        y = point_data['Y'].values
+        z = point_data['Z'].values
+        ax.plot(x, y, z, '-', color=colors[i], label=point_name)
     
     # Plot branch axis
     t = np.linspace(-1, 1, 100)
@@ -256,7 +195,8 @@ def visualize_branch(vertices, faces, axis_direction, axis_point):
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
-    ax.set_title('Branch Reconstruction')
+    ax.set_title('Ant Movement on Branch')
+    ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     
     plt.tight_layout()
     plt.show(block=True)
@@ -276,9 +216,13 @@ def visualize_branch(vertices, faces, axis_direction, axis_point):
     fig.canvas.mpl_connect('scroll_event', lambda event: None)
 
 def main():
-    # Camera coefficients (L, T, R, F)
+    # Load ant point data
+    ant_data = pd.read_excel('/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/5. Datasets/3D data/Large branch/11D4.xlsx', sheet_name=None)
+    
+    
+    # Camera coefficients
     A = np.array([
-        [-83.5273, -92.518, -81.1897, -87.1662],
+        [83.5273, 92.518, 81.1897, 87.1662],
         [1.4885, -3.1049, 3.8105, 1.3689],
         [48.5334, 7.2765, -38.6041, 17.7288],
         [692.1982, 757.5879, 652.8448, 663.2397],
@@ -291,77 +235,82 @@ def main():
         [-0.0002, -0.0015, -0.001, 0.0013]
     ])
     
-    # Example points from each camera view for branch reconstruction
-    points_2d = [
-        np.array([ 
+    # Define points for each camera view
+    camera_points = {
+        'Left': np.array([
             [481.56, 968.02],
             [512.88, 735.07],
             [559.87, 375.85],
             [603.91, 56.77]
-        ]), # Left
-        np.array([
+        ]),
+        'Top': np.array([
             [727.58, 1008.75],
             [775.68, 748.55],
             [866.94, 265.14],
             [912.56, 19.73]
-        ]), # Top
-        np.array([
+        ]),
+        'Right': np.array([
             [878.95, 1015.00],
             [902.44, 887.76],
             [934.74, 712.56],
             [961.17, 569.65]
-        ]), # Right
-        np.array([
+        ]),
+        'Front': np.array([
             [631.32, 957.25], 
             [678.30, 699.83], 
             [748.77, 301.47], 
             [794.78, 43.07]
-        ]) # Front
-    ]
+        ])
+    }
     
-    # Surface points for branch reconstruction (L, T, R, F)
-    surface_points_2d = [
-        [[533.59, 894.22], [642.76, 900.97], [670.31, 962.39], [566.14, 942.92]],  # First surface point
-        [[639.44, 347.73], [782.01, 368.21], [754.08, 449.26], [680.17, 463.98]]  # Second surface point
-    ]
+    # Define surface points for each camera view
+    surface_points = {
+        'Left': np.array([[533.59, 894.22], [639.44, 347.73]]),
+        'Top': np.array([[642.76, 900.97], [782.01, 368.21]]),
+        'Right': np.array([[670.31, 962.39], [754.08, 449.26]]),
+        'Front': np.array([[566.14, 942.92], [680.17, 463.98]])
+    }
 
-    # Print debug information
-    print("Reconstructing branch...")
-    print("Total cameras:", len(points_2d))
-    print("Active cameras:", [i for i, points in enumerate(points_2d) if points.size > 0])
-    print("Camera mapping: [Left=0, Top=1, Right=2, Front=3]")
     
-    axis_direction, axis_point = reconstruct_branch_axis(A, points_2d)
-    print("\nAxis direction:", axis_direction)
-    print("Axis point:", axis_point)
+    # Select which cameras to use for branch reconstruction
+    selected_cameras = ['Right', 'Top', 'Front', 'Left']  # You can modify this list to select different cameras
+    
+    # Select which cameras to use for surface points
+    selected_surface_cameras = ['Right', 'Top', 'Front', 'Left']  # You can modify this list to select different cameras
+    
+    # Get points and camera coefficients for selected cameras
+    camera_order = ['Left', 'Top', 'Right', 'Front']
+    selected_indices = [camera_order.index(cam) for cam in selected_cameras]
+    points_2d = [camera_points[cam] for cam in selected_cameras]
+    A_selected = A[:, selected_indices]
+    
+    # Get surface points for selected cameras
+    surface_points_2d = []
+    for i in range(len(surface_points['Left'])):  # For each point pair
+        point_pair = []
+        for cam in selected_surface_cameras:
+            point_pair.append(surface_points[cam][i])
+        surface_points_2d.append(point_pair)
+
+    # Reconstruct branch
+    print("Reconstructing branch...")
+    axis_direction, axis_point = reconstruct_branch_axis(A_selected, points_2d)
+    
+    # Get camera coefficients for surface points
+    surface_indices = [camera_order.index(cam) for cam in selected_surface_cameras]
+    A_surface = A[:, surface_indices]
     
     surface_points_3d = np.array([
-        reconstruct_3d_point(A, point_2d)
+        reconstruct_3d_point(A_surface, point_2d)
         for point_2d in surface_points_2d
     ])
-    print("\nNumber of surface points:", len(surface_points_3d))
     
     vertices, faces, radius = create_branch_cylinder(
         axis_direction, axis_point, surface_points_3d)
-    print("\nCylinder created with radius:", radius)
     
-    # Calculate residuals for surface points
-    print("\nCalculating residuals...")
-    print("Surface point reprojection errors:")
-    for i, point_2d in enumerate(surface_points_2d):
-        errors, mean_error = calculate_reprojection_error(A, surface_points_3d[i], point_2d)
-        print(f"Point {i+1}:")
-        print(f"  Per-camera errors (pixels): {[f'{e:.2f}' for e in errors]}")
-        print(f"  Mean error (pixels): {mean_error:.2f}")
-    
-    # Calculate axis residuals
-    axis_errors, mean_axis_error = calculate_axis_residual(A, axis_direction, axis_point, points_2d)
-    print("\nAxis fit errors:")
-    print(f"Per-camera errors (pixels): {[f'{e:.2f}' for e in axis_errors]}")
-    print(f"Mean axis error (pixels): {mean_axis_error:.2f}")
-    
-    print("\nVisualizing data...")
-    visualize_branch(vertices, faces, axis_direction, axis_point)
+    print("Visualizing data...")
+    visualize_branch_and_ant_points(vertices, faces, ant_data, axis_direction, axis_point)
 
 if __name__ == "__main__":
     main()
+

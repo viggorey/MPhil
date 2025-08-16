@@ -1,10 +1,11 @@
 % Define: 
 base_path = '/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/5. Datasets/2D data/Large branch/'; % Base path
-file_prefix = '11U1'; % Common file prefix
+file_prefix = '11D1'; % Common file prefix
 camera_suffixes = {'L', 'T', 'R', 'F'}; % Camera suffixes (Top, Left, Right, Front)
 
+
 A = [
-    -83.5273, -92.518, -81.1897, -87.1662;
+    83.5273, 92.518, 81.1897, 87.1662;
     1.4885, -3.1049, 3.8105, 1.3689;
     48.5334, 7.2765, -38.6041, 17.7288;
     692.1982, 757.5879, 652.8448, 663.2397;
@@ -19,9 +20,8 @@ A = [
 
 
 
-
 % Construct the full file paths dynamically
-camera_files = strcat(base_path, file_prefix, camera_suffixes, '.xlsx');camera_names = {'Left', 'Top', 'Right', 'Front'};
+camera_files = strcat(base_path, file_prefix, camera_suffixes, '.xlsx');camera_names = {'Left', 'Top',  'Right', 'Front'};
 num_cameras = length(camera_files);
 num_points = 16; % Number of tracking points
 
@@ -236,7 +236,7 @@ function plotResidualComparisons(combo_stats, H_all)
     % Create figure
     figure('Position', [100, 100, 1200, 800]);
     
-    % Get all unique combinations that actually exist in the statistics
+    % Get all unique combinations
     all_combos = {};
     for p = 1:length(combo_stats)
         combos = fieldnames(combo_stats(p).stats);
@@ -291,21 +291,14 @@ function plotResidualComparisons(combo_stats, H_all)
     num_cams_stats = struct();
     for i = 1:length(all_combos)
         combo = all_combos{i};
-        % Find the first point where this combo exists
+        num_cams = combo_stats(1).stats.(combo).num_cams;
+        if ~isfield(num_cams_stats, ['n', num2str(num_cams)])
+            num_cams_stats.(['n', num2str(num_cams)]) = [];
+        end
         for p = 1:length(combo_stats)
             if isfield(combo_stats(p).stats, combo)
-                num_cams = combo_stats(p).stats.(combo).num_cams;
-                if ~isfield(num_cams_stats, ['n', num2str(num_cams)])
-                    num_cams_stats.(['n', num2str(num_cams)]) = [];
-                end
-                % Collect residuals from all points for this combo
-                for pp = 1:length(combo_stats)
-                    if isfield(combo_stats(pp).stats, combo)
-                        num_cams_stats.(['n', num2str(num_cams)]) = [num_cams_stats.(['n', num2str(num_cams)]), ...
-                            mean(combo_stats(pp).stats.(combo).residuals)];
-                    end
-                end
-                break; % Only need to get num_cams once
+                num_cams_stats.(['n', num2str(num_cams)]) = [num_cams_stats.(['n', num2str(num_cams)]), ...
+                    mean(combo_stats(p).stats.(combo).residuals)];
             end
         end
     end
@@ -322,14 +315,12 @@ function plotResidualComparisons(combo_stats, H_all)
         end
     end
     
-    if ~isempty(cam_numbers)
-        bar(cam_numbers, num_cams_means);
-        hold on;
-        errorbar(cam_numbers, num_cams_means, num_cams_stds, 'k.');
-        title('Average Residual by Number of Cameras');
-        xlabel('Number of Cameras');
-        ylabel('Average Normalized Residual');
-    end
+    bar(cam_numbers, num_cams_means);
+    hold on;
+    errorbar(cam_numbers, num_cams_means, num_cams_stds, 'k.');
+    title('Average Residual by Number of Cameras');
+    xlabel('Number of Cameras');
+    ylabel('Average Normalized Residual');
     
     % 3. Usage frequency of different combinations
     subplot(2,2,3)
@@ -350,7 +341,7 @@ function plotResidualComparisons(combo_stats, H_all)
     xlabel('Camera Combination');
     ylabel('Frequency');
     
-    % 4. Time series of residuals for each point
+    % 4. NEW: Time series of residuals for each point
     subplot(2,2,4)
     hold on;
     
@@ -415,7 +406,5 @@ for point = 1:num_points
 end
 
 disp(['Data successfully exported to ', output_file]);
-
-disp(fieldnames(combo_stats(1).stats))
 
 

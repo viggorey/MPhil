@@ -1,6 +1,7 @@
 % Define your 3D coordinates (F)
 F = [
     0, 0, 0;
+    0, 0, -2;
     0, 2, -2;
     0, 2, 0;
     2, 0, -2;
@@ -11,16 +12,15 @@ F = [
 
 % Define your 2D coordinates (L)
 L = [
-    563.84, 596.59;
-    544.38, 861.46;
-    560.75, 767.01;
-    689.49, 700.99;
-    688.38, 871.62;
-    705.87, 608.11;
-    705.10, 776.73
+    757.61, 317.74;
+    740.83, 315.51;
+    734.32, 608.77;
+    750.84, 610.45;
+    923.88, 319.96;
+    917.02, 611.40;
+    941.06, 320.06;
+    934.44, 613.62
 ]; % Corresponding 2D coordinates in the image
-
-
 
 % Optional: Define Cut points if any (this is where you exclude points)
 Cut = [];  % Or you can specify like Cut = [1, 3];
@@ -101,9 +101,6 @@ function [A, avgres] = calculateDLT(F, L, Cut)
     R = C - D; % Calculate residuals
     res = norm(R); 
     avgres = res / sqrt(size(R,1)); % Calculate average residuals
-
-    % After calculating A, flip the first row to correct for mirroring
-    A(1,:) = -A(1,:);
 end
 
 %what is c and R and what norm does

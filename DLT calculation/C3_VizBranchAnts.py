@@ -217,81 +217,91 @@ def visualize_branch_and_ant_points(vertices, faces, ant_data, axis_direction, a
 
 def main():
     # Load ant point data
-    ant_data = pd.read_excel('/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/5. Datasets/3D data/11U1.xlsx', sheet_name=None)
+    ant_data = pd.read_excel('/Users/viggorey/Desktop/PhD/Cambridge/Macaranga/3D transformation/5. Datasets/3D data/Large branch/11D7.xlsx', sheet_name=None)
+    
     
     # Camera coefficients
     A = np.array([
-        [90.798, 91.6283, 68.6801, -6.9384],
-        [0.9664, -2.8374, 5.6441, 114.8824],
-        [24.4139, -17.6627, -59.2024, -29.8135],
-        [594.3277, 667.1884, 676.3614, 498.9457],
-        [-1.7397, 1.7846, -0.6094, -77.332],
-        [149.6519, 147.3786, 143.9186, -3.9629],
-        [0.121, -0.7585, 4.8412, 8.6032],
-        [331.1221, 300.1799, 342.79, 590.4905],
-        [0.0006, 0.001, -0.0011, -0.001],
-        [-0.0012, 0.0003, 0.0006, 0.0003],
-        [-0.0005, -0.0019, -0.0013, -0.0011]
+        [83.5273, 92.518, 81.1897, 87.1662],
+        [1.4885, -3.1049, 3.8105, 1.3689],
+        [48.5334, 7.2765, -38.6041, 17.7288],
+        [692.1982, 757.5879, 652.8448, 663.2397],
+        [-0.0698, 1.9538, -1.8253, 3.4876],
+        [149.2815, 146.887, 142.6634, 127.964],
+        [1.106, 0.0965, 4.574, -38.4277],
+        [302.1854, 317.1885, 405.0939, 354.242],
+        [0.0031, 0.0008, -0.0011, -0.0018],
+        [0.0005, 0.0003, -0.0009, -0.004],
+        [-0.0002, -0.0015, -0.001, 0.0013]
     ])
     
+    # Define points for each camera view
+    camera_points = {
+        'Left': np.array([
+            [481.56, 968.02],
+            [512.88, 735.07],
+            [559.87, 375.85],
+            [603.91, 56.77]
+        ]),
+        'Top': np.array([
+            [727.58, 1008.75],
+            [775.68, 748.55],
+            [866.94, 265.14],
+            [912.56, 19.73]
+        ]),
+        'Right': np.array([
+            [878.95, 1015.00],
+            [902.44, 887.76],
+            [934.74, 712.56],
+            [961.17, 569.65]
+        ]),
+        'Front': np.array([
+            [631.32, 957.25], 
+            [678.30, 699.83], 
+            [748.77, 301.47], 
+            [794.78, 43.07]
+        ])
+    }
     
-    # Example points from each camera view for branch reconstruction
-    points_2d = [
-        np.array([
-            [579.56, 1015.50],
-            [579.56, 952.50],
-            [578.30, 847.93],
-            [577.04, 767.29],
-            [574.52, 666.50],
-            [573.26, 573.26],
-            [572.00, 488.85],
-            [569.48, 417.03],
-            [568.22, 332.62],
-            [565.70, 243.16],
-            [565.70, 163.79],
-            [564.44, 75.60],
-            [563.18, 0.00]
-        ]), # Left
-        np.array([
-            [759.73, 1015.50],
-            [758.47, 923.52],
-            [755.95, 817.69],
-            [754.69, 687.92],
-            [752.17, 560.66],
-            [750.91, 432.15],
-            [749.65, 326.32],
-            [748.39, 229.31],
-            [745.87, 118.43],
-            [744.61, -1.26]
-        ]), # Top
-        np.array([
-            [882.59, 761.95],
-            [873.07, 641.31],
-            [866.72, 527.02],
-            [861.96, 436.54],
-            [857.20, 355.58],
-            [852.43, 276.21],
-            [846.08, 192.08],
-            [842.91, 112.71],
-            [834.97, 3.17]
-        ]), # Right
-        #np.array([[574.64, 961.96], [507.97, 633.37], [541.30, 803.22], [439.71, 280.97]]) # Front
-    ]
+    # Define surface points for each camera view
+    surface_points = {
+        'Left': np.array([[753.54, 847.11], [639.44, 347.73]]),
+        'Top': np.array([[899.41, 858.67], [782.01, 368.21]]),
+        'Right': np.array([[891.15, 925.28], [754.08, 449.26]]),
+        'Front': np.array([[816.29, 921.97], [680.17, 463.98]])
+    }
+
     
-    # Surface points for branch reconstruction (L, T, R, F)
-    surface_points_2d = [
-        [[798.70, 964.67], [798.79, 932.34], [749.05, 974.48], [933.57, 446.15]],
-        [[614.84, 546.81], [622.40, 514.05], [587.12, 573.26], [617.53, 613.34]],
-        [[723.44, 503.85], [732.07, 476.20], [669.16, 531.72], [577.04, 522.87]],
-        [[700.52, 113.39], [718.15, 94.49], [635.41, 164.30], [280.50, 552.00]]
-    ]
+    # Select which cameras to use for branch reconstruction
+    selected_cameras = ['Left', 'Right', 'Top']  # You can modify this list to select different cameras
+    
+    # Select which cameras to use for surface points
+    selected_surface_cameras = ['Left', 'Top', 'Right', 'Front']  # You can modify this list to select different cameras
+    
+    # Get points and camera coefficients for selected cameras
+    camera_order = ['Left', 'Top', 'Right', 'Front']
+    selected_indices = [camera_order.index(cam) for cam in selected_cameras]
+    points_2d = [camera_points[cam] for cam in selected_cameras]
+    A_selected = A[:, selected_indices]
+    
+    # Get surface points for selected cameras
+    surface_points_2d = []
+    for i in range(len(surface_points['Left'])):  # For each point pair
+        point_pair = []
+        for cam in selected_surface_cameras:
+            point_pair.append(surface_points[cam][i])
+        surface_points_2d.append(point_pair)
 
     # Reconstruct branch
     print("Reconstructing branch...")
-    axis_direction, axis_point = reconstruct_branch_axis(A, points_2d)
+    axis_direction, axis_point = reconstruct_branch_axis(A_selected, points_2d)
+    
+    # Get camera coefficients for surface points
+    surface_indices = [camera_order.index(cam) for cam in selected_surface_cameras]
+    A_surface = A[:, surface_indices]
     
     surface_points_3d = np.array([
-        reconstruct_3d_point(A, point_2d)
+        reconstruct_3d_point(A_surface, point_2d)
         for point_2d in surface_points_2d
     ])
     
