@@ -1,0 +1,52 @@
+# Exclude Dissertation folder
+Dissertation/
+
+# Exclude Old folder
+Old/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files (large)
+*.xlsx
+*.xls
+*.csv
+*.tiff
+*.tif
+*.blend
+*.blend1
+*.FBX
+*.obj
+*.stl
+
+# Temporary files
+*.tmp
+*.log
+~$*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Build
+build/
+dist/
+*.egg-info/

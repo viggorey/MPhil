@@ -1,0 +1,13 @@
+{
+  "frame_rate": 91,
+  "slip_threshold": 0.01,
+  "foot_branch_distance": 0.45,
+  "foot_immobility_threshold": 0.25,
+  "immobility_frames": 2,
+  "branch_extension_factor": 0.5,
+  "normalization_method": "body_length",
+  "thorax_length_points": [2, 3],
+  "body_length_points": [1, 4],
+  "camera_order": ["Left", "Top", "Right", "Front"],
+  "num_tracking_points": 16
+}
