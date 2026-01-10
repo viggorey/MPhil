@@ -243,8 +243,8 @@ See `Blender scripts/README.md` for detailed documentation.
 
 ## License
 
-[Add your license information here]
+No license
 
 ## Contact
 
-[Add your contact information here]
+vr382@cam.ac.uk
