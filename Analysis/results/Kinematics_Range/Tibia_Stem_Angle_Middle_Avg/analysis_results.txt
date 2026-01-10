@@ -1,0 +1,34 @@
+ANOVA Results:
+================
+Main Effect - Species (Wax_Runner vs Non_Wax_Runner):
+  F = 1.6189, p = 2.1410e-01
+  Significant: No
+
+Main Effect - Substrate (Waxy vs Smooth):
+  F = 12.5071, p = 1.4868e-03
+  Significant: Yes
+
+Interaction Effect (Species × Substrate):
+  F = 9.4429, p = 4.8014e-03
+  Significant: Yes
+
+Assumptions:
+============
+Normality: Passed
+Homogeneity: Passed
+Method Used: Factorial ANOVA
+
+Post-hoc Analysis:
+==================
+Method: Simple effects ANOVA (emmeans-like with Holm correction)
+Note: Simple effects show pairwise comparisons for all main effects and interactions
+
+Simple Effects Results (Holm-corrected):
+  Substrate within Wax_Runner:
+    F = 19.1548, p = 0.000749, p_adj = 0.002997 *
+  Substrate within Non_Wax_Runner:
+    F = 0.2140, p = 0.650738, p_adj = 0.005364 *
+  Species within Waxy:
+    F = 13.9815, p = 0.001788, p_adj = 0.492642 ns
+  Species within Smooth:
+    F = 1.4995, p = 0.246321, p_adj = 0.650738 ns

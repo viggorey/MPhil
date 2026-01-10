@@ -1,1 +1,157 @@
-{}
+{
+  "22U1": {
+    "calibration_set": "Set1",
+    "branch_set": "22U1",
+    "species": "NWR"
+  },
+  "11U10": {
+    "calibration_set": "Set1",
+    "branch_set": "11U3",
+    "species": "WR"
+  },
+  "11U11": {
+    "calibration_set": "Set1",
+    "branch_set": "11U3",
+    "species": "WR"
+  },
+  "11U3": {
+    "calibration_set": "Set1",
+    "branch_set": "11U3",
+    "species": "WR"
+  },
+  "11U4": {
+    "calibration_set": "Set1",
+    "branch_set": "11U3",
+    "species": "WR"
+  },
+  "11U5": {
+    "calibration_set": "Set1",
+    "branch_set": "11U3",
+    "species": "WR"
+  },
+  "11U6": {
+    "calibration_set": "Set1",
+    "branch_set": "11U3",
+    "species": "WR"
+  },
+  "11U7": {
+    "calibration_set": "Set1",
+    "branch_set": "11U3",
+    "species": "WR"
+  },
+  "11U8": {
+    "calibration_set": "Set1",
+    "branch_set": "11U3",
+    "species": "WR"
+  },
+  "11U9": {
+    "calibration_set": "Set1",
+    "branch_set": "11U3",
+    "species": "WR"
+  },
+  "12U1": {
+    "calibration_set": "Set1",
+    "branch_set": "12U6",
+    "species": "WR"
+  },
+  "12U2": {
+    "calibration_set": "Set1",
+    "branch_set": "12U6",
+    "species": "WR"
+  },
+  "12U3": {
+    "calibration_set": "Set1",
+    "branch_set": "12U6",
+    "species": "WR"
+  },
+  "12U4": {
+    "calibration_set": "Set1",
+    "branch_set": "12U6",
+    "species": "WR"
+  },
+  "12U5": {
+    "calibration_set": "Set1",
+    "branch_set": "12U6",
+    "species": "WR"
+  },
+  "12U6": {
+    "calibration_set": "Set1",
+    "branch_set": "12U6",
+    "species": "WR"
+  },
+  "21U1": {
+    "calibration_set": "Set1",
+    "branch_set": "21U4",
+    "species": "NWR"
+  },
+  "21U10": {
+    "calibration_set": "Set1",
+    "branch_set": "21U4",
+    "species": "NWR"
+  },
+  "21U2": {
+    "calibration_set": "Set1",
+    "branch_set": "21U4",
+    "species": "NWR"
+  },
+  "21U3": {
+    "calibration_set": "Set1",
+    "branch_set": "21U4",
+    "species": "NWR"
+  },
+  "21U5": {
+    "calibration_set": "Set1",
+    "branch_set": "21U4",
+    "species": "NWR"
+  },
+  "21U6": {
+    "calibration_set": "Set1",
+    "branch_set": "21U4",
+    "species": "NWR"
+  },
+  "21U7": {
+    "calibration_set": "Set1",
+    "branch_set": "21U4",
+    "species": "NWR"
+  },
+  "21U8": {
+    "calibration_set": "Set1",
+    "branch_set": "21U4",
+    "species": "NWR"
+  },
+  "21U9": {
+    "calibration_set": "Set1",
+    "branch_set": "21U4",
+    "species": "NWR"
+  },
+  "22U10": {
+    "calibration_set": "Set1",
+    "branch_set": "22U10",
+    "species": "NWR"
+  },
+  "22U11": {
+    "calibration_set": "Set1",
+    "branch_set": "22U10",
+    "species": "NWR"
+  },
+  "22U4": {
+    "calibration_set": "Set1",
+    "branch_set": "22U10",
+    "species": "NWR"
+  },
+  "22U7": {
+    "calibration_set": "Set1",
+    "branch_set": "22U10",
+    "species": "NWR"
+  },
+  "22U8": {
+    "calibration_set": "Set1",
+    "branch_set": "22U10",
+    "species": "NWR"
+  },
+  "22U9": {
+    "calibration_set": "Set1",
+    "branch_set": "22U10",
+    "species": "NWR"
+  }
+}
